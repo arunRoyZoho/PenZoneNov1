@@ -1,0 +1,75 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.arun_5540.penzone.NoProfileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+
+            android:id="@+id/imageView4"
+
+            android:layout_marginTop="100dp"
+            android:layout_gravity="center"
+            android:layout_width="167dp"
+            android:layout_height="140dp"
+            app:srcCompat="@drawable/boy" />
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView10"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:text="@string/user_not_logged_in"
+            android:textAllCaps="true"/>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_marginTop="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="32dp">
+            <Button
+                android:id="@+id/ButtonProfileLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:textColor="@color/cardview_light_background"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginRight="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.235"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp" />
+            <Button
+                android:id="@+id/ButtonProfileSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/skip"
+                android:textColor="@color/cardview_light_background"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginRight="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/ButtonProfileLogin"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintHorizontal_bias="0.344"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp" />
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>
