@@ -4,6 +4,7 @@ package com.example.arun_5540.penzone
 import android.app.Fragment
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -43,6 +44,7 @@ class CartFragment: Fragment() {
 
         val mRecyclerView  = view.findViewById<RecyclerView>(R.id.CartRecyclerView)
         mRecyclerView.layoutManager = LinearLayoutManager(activity)
+        mRecyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         val  mAdapter = CartAdapter(listOfCart, activity)
         mRecyclerView.adapter = mAdapter
 
