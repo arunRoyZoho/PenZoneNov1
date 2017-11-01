@@ -3,6 +3,7 @@ package com.example.arun_5540.penzone
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -53,6 +54,7 @@ class ProceedToBankFragment : Fragment() {
 
 
         val mProductView  = view!!.findViewById<RecyclerView>(R.id.productNameRecyclerView)
+        mProductView.addItemDecoration(DividerItemDecoration(activity,DividerItemDecoration.VERTICAL))
         mProductView.layoutManager = LinearLayoutManager(activity)
         val  mAdapter = ProductListAdapter(cartList)
         mProductView.adapter = mAdapter

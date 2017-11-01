@@ -11,14 +11,10 @@ import android.view.ViewGroup
 
 class RecyclerFragment : Fragment(){
 
-    /*override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-    */
 
-    lateinit var  mAdapter: RecyclerAdapter
-    var mProductList = mutableListOf<Int>()
+
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
          super.onCreateView(inflater, container, savedInstanceState)
@@ -30,32 +26,24 @@ class RecyclerFragment : Fragment(){
         super.onActivityCreated(savedInstanceState)
 
         val mRecyclerView  = view.findViewById<RecyclerView>(R.id.recyclerView)
-
         mRecyclerView.layoutManager = GridLayoutManager(activity,2)
 
 
-
         val db = DataBaseHandler(activity)
-        mProductList = db.getAllProducts()
-
+        val mProductList = db.getAllProductsWithImage()
         val b: Bundle = arguments
         val searchTerm = b.getString("SearchQuery")
-       /* if(searchTerm != "no search"){
-          val list =   mProductList.filter { it.name.contains(searchTerm) || it.brand.contains(searchTerm) }
+        if(searchTerm != "no search"){
+            val list =   mProductList.filter { it.name.contains(searchTerm) || it.brand.contains(searchTerm) }
             mProductList.clear()
             mProductList.addAll(list)
-        } */
-        mAdapter = RecyclerAdapter(mProductList)
+        }
+        val mAdapter = RecyclerAdapter(mProductList)
         mRecyclerView.adapter= mAdapter
+
     }
 
     interface ProductListAction{
         fun goToProductPage(productId: Int)
     }
-
-    /*override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_search).isVisible = true
-    }
-    */
 }

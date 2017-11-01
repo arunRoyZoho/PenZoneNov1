@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val frmng = fragmentManager.beginTransaction()
                         frmng.replace(R.id.mainActivityFrame, noProfileFragment, "empty profile fragment")
                         frmng.addToBackStack("empty profile fragment")
+
                         frmng.commit()
 
                     }
@@ -241,7 +242,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val noProfileFragment = NoProfileFragment() as Fragment
                         val frmng = fragmentManager.beginTransaction()
                         frmng.replace(R.id.mainActivityFrame, noProfileFragment, "empty profile fragment")
-                                .addToBackStack("empty profile  fragment").commit()
+                        frmng.addToBackStack("empty profile  fragment")
+                        frmng.commit()
                     }
                     else->{
                         val db = DataBaseHandler(this)
@@ -338,6 +340,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
        recyclerProduct.arguments =args
        val frgMng = fragmentManager.beginTransaction()
        frgMng.replace(R.id.mainActivityFrame, recyclerProduct, "showing products with search")
+       frgMng.addToBackStack("showing products with search")
        frgMng.commit()
     }
 

@@ -1,6 +1,5 @@
 package com.example.arun_5540.penzone
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,14 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 
 
-class RecyclerAdapter( private val mProducts: List<Int>) :RecyclerView.Adapter<RecyclerAdapter.ProductHolder>(){
+class RecyclerAdapter( private val mProducts: List<ProductImage>) :RecyclerView.Adapter<RecyclerAdapter.ProductHolder>(){
 
 
 
-    class ProductHolder(v:View, context: Context): RecyclerView.ViewHolder(v),View.OnClickListener{
+    class ProductHolder(v:View): RecyclerView.ViewHolder(v),View.OnClickListener{
 
-        val cntxt = context
-        private  var  mProductId: Int = 0
+
+        private  lateinit var  mProductImage:ProductImage
 
         init {
             v.setOnClickListener(this)
@@ -26,29 +25,26 @@ class RecyclerAdapter( private val mProducts: List<Int>) :RecyclerView.Adapter<R
         private val productName:  TextView  = v.findViewById(R.id.name)
         private val productBrand: TextView  = v.findViewById(R.id.Brand)
         private val productPrice: TextView  = v.findViewById(R.id.price)
-        private val productImage: ImageView = v.findViewById(R.id.productImage)
+        private val productPhoto: ImageView = v.findViewById(R.id.productImage)
 
-        fun bindProduct(  productId: Int){
-            mProductId = productId
-            val db = DataBaseHandler(cntxt)
-            val product = db.getProduct(mProductId)
-            productName.text = product.name
-            productBrand.text = product.brand
-            productPrice.text = product.price.toString()
-            val img = db.getProductImage(product.id)
-            productImage.setImageBitmap(img)
+        fun bindProduct(  productImage: ProductImage){
+            mProductImage     = productImage
+            productName.text  = mProductImage.name
+            productBrand.text = mProductImage.brand
+            productPrice.text = mProductImage.price.toString()
+            productPhoto.setImageBitmap(mProductImage.img)
          }
 
         override fun onClick(v: View) {
             Log.d("recycler view" ,"click registered")
             val fr1 = v.context as RecyclerFragment.ProductListAction
-            fr1.goToProductPage(mProductId)
+            fr1.goToProductPage(mProductImage.id)
         }
     }
 
     override fun onBindViewHolder(holder: ProductHolder, position: Int) {
-        val productId = mProducts[position]
-        holder.bindProduct(productId)
+        val productImage = mProducts[position]
+        holder.bindProduct(productImage)
     }
 
 
@@ -58,7 +54,7 @@ class RecyclerAdapter( private val mProducts: List<Int>) :RecyclerView.Adapter<R
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder{
         val  inflatedView:View = LayoutInflater.from(parent.context)
                                 .inflate(R.layout.product_card,parent,false)
-        return ProductHolder(inflatedView, parent.context)
+        return ProductHolder(inflatedView)
     }
 
 

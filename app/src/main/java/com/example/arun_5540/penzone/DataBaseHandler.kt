@@ -12,10 +12,10 @@ import java.io.ByteArrayOutputStream
 class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION ){
 
 
-    val cntxt = context
-    private  val myCR = context.contentResolver
-    private  val myCP = MyContentProvider()
-    val defaultDatabase = DefaultDatabase()
+    private val cntxt = context
+    private val myCR = context.contentResolver
+    private val myCP = MyContentProvider()
+    private val defaultDatabase = DefaultDatabase()
 
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -122,7 +122,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
     private fun convertToByteArray(image: Int): ByteArray{
         val bitmap = BitmapFactory.decodeResource(cntxt.resources,image)
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 50, bos)
         return bos.toByteArray()
     }
 
@@ -135,12 +135,14 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val cursor = myCR.query(myCP.CONTENT_PENZONE_USER_URI, projection, selection, selectionArgs, null)
         if(cursor.moveToFirst())
         {
-            val id = cursor.getInt(0)
+
             val name = cursor.getString(1)
             val phone = cursor.getString(2)
             val email = cursor.getString(3)
             val password = cursor.getString(4)
-            return User(name,phone, email,password)
+            val user = User(name,phone, email,password)
+            cursor.close()
+            return user
         }
         return User("no user","0","","")
     }
@@ -153,6 +155,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val cursor = myCR.query(myCP.CONTENT_PENZONE_USER_URI, projection, selection, selectionArgs, null)
         if(cursor.moveToFirst()){
             val userId = cursor.getInt(0)
+            cursor.close()
             return userId
         }
         return -1
@@ -167,26 +170,50 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val cursor = myCR.query(myCP.CONTENT_PENZONE_USER_URI, projection, selection, selectionArgs, null)
         if(cursor.moveToFirst())
         {
-            val id = cursor.getInt(0)
+
             val name = cursor.getString(1)
             val phone = cursor.getString(2)
             val email = cursor.getString(3)
             val password = cursor.getString(4)
-            return User(name,phone, email,password)
+            val user = User(name,phone, email,password)
+            cursor.close()
+            return user
         }
         return User("no user","0","","")
     }
 
-    internal fun getAllProducts(): MutableList<Int>{
-        val projection = arrayOf( PRODUCT_ID)
+//    internal fun getAllProducts(): MutableList<Int>{
+//        val projection = arrayOf( PRODUCT_ID)
+//        val cursor = myCR.query(myCP.CONTENT_PENZONE_PRODUCT_URI, projection,null,null,null)
+//        val listOfProduct = mutableListOf<Int>()
+//        if(cursor.moveToFirst()){
+//            do{
+//                val id       = cursor.getInt(0)
+//                listOfProduct.add(id)
+//            }while (cursor.moveToNext())
+//        }
+//        return  listOfProduct
+//    }
+
+    internal fun getAllProductsWithImage(): MutableList<ProductImage>{
+        val projection = arrayOf( PRODUCT_ID, PRODUCT_NAME, PRODUCT_BRAND, PRODUCT_COLOUR, PRODUCT_PRICE, PRODUCT_STOCKLEFT, PRODUCT_DESCRIPTION, PRODUCT_IMAGE)
         val cursor = myCR.query(myCP.CONTENT_PENZONE_PRODUCT_URI, projection,null,null,null)
-        val listOfProduct = mutableListOf<Int>()
+        val listOfProduct = mutableListOf<ProductImage>()
         if(cursor.moveToFirst()){
             do{
-                val id       = cursor.getInt(0)
-                listOfProduct.add(id)
+                val id           = cursor.getInt(0)
+                val name         = cursor.getString(1)
+                val brand        = cursor.getString(2)
+                val colour       = cursor.getString(3)
+                val price        = cursor.getFloat(4)
+                val stockLeft    = cursor.getInt(5)
+                val description  = cursor.getString(6)
+                val image        = cursor.getBlob(7)
+                val img = BitmapFactory.decodeByteArray(image, 0, image.size)
+                listOfProduct.add(ProductImage(id, name, brand, colour, price, stockLeft, description, img))
             }while (cursor.moveToNext())
         }
+        cursor.close()
         return  listOfProduct
     }
 
@@ -197,15 +224,16 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val cursor = myCR.query(myCP.CONTENT_PENZONE_PRODUCT_URI, projection,selection,selectionArgs,null)
 
         if(cursor.moveToFirst()){
-           val id           = cursor.getInt(0)
-           val name         = cursor.getString(1)
-           val brand        = cursor.getString(2)
-           val colour       = cursor.getString(3)
-           val price        = cursor.getFloat(4)
-           val stockLeft    = cursor.getInt(5)
-           val description  = cursor.getString(6)
 
-           return Product(id,name,brand,colour,price,stockLeft,description)
+            val name         = cursor.getString(1)
+            val brand        = cursor.getString(2)
+            val colour       = cursor.getString(3)
+            val price        = cursor.getFloat(4)
+            val stockLeft    = cursor.getInt(5)
+            val description  = cursor.getString(6)
+            val product      = Product(id,name,brand,colour,price,stockLeft,description)
+            cursor.close()
+            return product
         }
         return Product(-1,"","","",0f,0, "")
     }
@@ -218,8 +246,10 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val cursor        = myCR.query(myCP.CONTENT_PENZONE_PRODUCT_URI, projection, selection, selectionArgs , null)
 
         if(cursor.moveToFirst()){
-            val img = cursor.getBlob(0)
-            return  BitmapFactory.decodeByteArray(img, 0, img.size)
+            val img   = cursor.getBlob(0)
+            val image = BitmapFactory.decodeByteArray(img, 0, img.size)
+            cursor.close()
+            return image
         }
         return null
     }
@@ -237,6 +267,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
         val selectionArgs = arrayOf(userId.toString(), productId.toString())
         val cursor = myCR.query(myCP.CONTENT_PENZONE_WISHLIST_URI, projection, selection, selectionArgs, null)
         if(cursor.moveToFirst()){
+            cursor.close()
             return false
         }
         val values = ContentValues()
@@ -268,8 +299,10 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
                        listOfOrder.add(cursor.getInt(0))
                    }while (cursor.moveToNext())
                }
+               cursor.close()
            }while (cur.moveToNext())
         }
+        cur.close()
         return  listOfOrder
     }
 
@@ -283,7 +316,9 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
             val billId    = cursor.getString(1)
             val productId = cursor.getInt(2)
             val quantity  = cursor.getInt(3)
-            return Order(id,billId,productId,quantity)
+            val order     = Order(id,billId,productId,quantity)
+            cursor.close()
+            return order
         }
         return Order(0, "",0,0)
     }
@@ -300,6 +335,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
                 listOfWish.add(WishList(cursor.getInt(0),cursor.getInt(1),cursor.getInt(2)))
             }while (cursor.moveToNext())
         }
+        cursor.close()
         return  listOfWish
     }
 
@@ -336,6 +372,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
                 myCR.insert(myCP.CONTENT_PENZONE_CART_URI, values)
             }
             changeProductStock(productId, (-quantity))
+            cursor.close()
             return true
         }
 
@@ -363,6 +400,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
                 listOfCart.add(Cart(cursor.getInt(0),cursor.getInt(1),cursor.getInt(2),cursor.getInt(3)))
             }while (cursor.moveToNext())
         }
+        cursor.close()
         return  listOfCart
     }
 
@@ -379,6 +417,7 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
             changeProductStock(productId, cartQuantity)
             myCR.delete(myCP.CONTENT_PENZONE_CART_URI, selection, selectionArgs)
         }
+        cursor.close()
     }
 
     internal fun reduceCartQuantity(cartId: Int, quantity: Int){
@@ -396,14 +435,15 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
             values.put(CART_QUANTITY, newQuantity)
             myCR.update(myCP.CONTENT_PENZONE_CART_URI,values, selection, selectionArgs )
         }
+        cursor.close()
     }
 
-    fun addAddress( address: Address){
-        val values = ContentValues()
-        values.put(USER_ID, address.user_id)
-        values.put(ADDRESS, address.address)
-        myCR.insert(myCP.CONTENT_PENZONE_ADDRESS_URI,values)
-    }
+//    fun addAddress( address: Address){
+//        val values = ContentValues()
+//        values.put(USER_ID, address.user_id)
+//        values.put(ADDRESS, address.address)
+//        myCR.insert(myCP.CONTENT_PENZONE_ADDRESS_URI,values)
+//    }
 
     internal fun addOrder(billId: String, productId: Int, quantity: Int){
         val values = ContentValues()
@@ -439,7 +479,9 @@ class DataBaseHandler (context: Context): SQLiteOpenHelper(context, DB_NAME, nul
                 "false"->false
                 else-> false
             }
-            return Bill(cursor.getString(0),cursor.getInt(1),status,cursor.getLong(3), cursor.getFloat(4),cursor.getString(5))
+            val bill = Bill(cursor.getString(0),cursor.getInt(1),status,cursor.getLong(3), cursor.getFloat(4),cursor.getString(5))
+            cursor.close()
+            return bill
         }
         return  Bill(" ", 0, false, 0, 0f, " ")
     }

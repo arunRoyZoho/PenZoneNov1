@@ -1,5 +1,7 @@
 package com.example.arun_5540.penzone
 
+import android.graphics.Bitmap
+
 
 data class User(
         val name: String,
@@ -23,6 +25,17 @@ data class Product(
         val stockLeft: Int,
         val description: String
 
+)
+
+data class ProductImage(
+        val id: Int,
+        val name:String,
+        val brand: String,
+        val colour: String,
+        val price: Float,
+        val stockLeft: Int,
+        val description: String,
+        val img: Bitmap
 )
 
 data class Cart(
